@@ -32,6 +32,6 @@ public class Customer {
 
     @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cusid")
+    @JoinColumn(name = "customerId")
     private Wallet wallet;
 }
