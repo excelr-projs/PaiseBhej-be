@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("tran")
+@RestController
+@RequestMapping("/transaction")
 public class TransactionController {
     @Autowired
     TransactionService transactionService;

@@ -23,7 +23,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public Customer updatedCustomer(Customer customer, String key) throws CustomerException {
+    public Customer updateCustomer(Customer customer, String key) throws CustomerException {
         CurrentUserSession loggedInUser = sessionRepository.findByUuid(key);
         if (loggedInUser==null){
             throw new CustomerException("PLEASE PROVIDE A VALID KEY");

@@ -20,26 +20,23 @@ public class WalletServiceImpl implements WalletService{
     @Autowired
     private SessionRepository sessionRepository;
     @Override
-    public Customer createAccount(String name, String mobile, Double balance, String key)
-            throws CustomerException, WalletException {
+    public Wallet createWallet(String mobile, Double balance, String key) throws CustomerException, WalletException {
         CurrentUserSession loggedInUser = sessionRepository.findByUuid(key);
         if (loggedInUser == null){
             throw new CustomerException("PLEASE PROVIDE A VALID KEY");
         }
         Customer customer = customerRepository.findByMobileNumber(mobile);
-        if(customer == null){
+        if (customer == null){
             throw new CustomerException("CUSTOMER NOT FOUND");
         }
-        if (customer.getWallet()!=null){
-            throw  new WalletException("WALLET ALREADY EXISTS");
-        }
         Wallet wallet = new Wallet();
-        customerRepository.save(customer);
-        return customer;
+        wallet.setBalance(balance);
+        walletRepository.save(wallet);
+        return wallet;
     }
 
     @Override
-    public Customer showBalance(String mobile, String key) throws CustomerException {
+    public Double showBalance(String mobile, String key) throws CustomerException {
         CurrentUserSession loggedInUser = sessionRepository.findByUuid(key);
         if(loggedInUser == null){
             throw new CustomerException("PLEASE PROVIDE A VALID KEY");
@@ -48,7 +45,7 @@ public class WalletServiceImpl implements WalletService{
         if (customer == null){
             throw  new CustomerException("CUSTOMER NOT FOUND");
         }
-        return customer;
+        return customer.getWallet().getBalance();
     }
 
     @Override

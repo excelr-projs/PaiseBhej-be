@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class LoginServiceImpl implements LoginService{
@@ -27,9 +26,6 @@ public class LoginServiceImpl implements LoginService{
             throw  new LoginException("PLEASE ENTER A VALID MOBILE NUMBER");
         }
       Optional<CurrentUserSession> currentUserSession= sessionRepository.findById(existingCustomer.getCustomerId());
-        if (currentUserSession.isPresent()){
-            throw new LoginException("USER ALREADY LOGGED IN WITH THIS NUMBER");
-        }
         if (existingCustomer.getPassword().equals(loginDTO.getPassword())){
             String key = RandomString.make(6);
             CurrentUserSession currentUserSession1 = new CurrentUserSession(existingCustomer.getCustomerId(),key, LocalDateTime.now());
@@ -38,6 +34,15 @@ public class LoginServiceImpl implements LoginService{
         }else
             throw new LoginException("PLEASE ENTER A VALID PASSWORD");
 
+    }
+
+    @Override
+    public String checkLogin(String key) throws LoginException {
+        CurrentUserSession currentUserSession = sessionRepository.findByUuid(key);
+        if (currentUserSession==null){
+            throw new LoginException("USER NOT LOGGED IN");
+        }
+        return "USER LOGGED IN";
     }
 
     @Override
