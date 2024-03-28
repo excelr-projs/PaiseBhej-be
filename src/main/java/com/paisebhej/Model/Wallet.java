@@ -8,22 +8,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer walletId;
-
     private Double balance;
-
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @OneToOne(mappedBy = "wallet")
+    private Customer customer;
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(mappedBy = "wallet")
     private List<Account> accounts = new ArrayList<>();
-
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL , mappedBy = "wallet")
+    @ToString.Exclude
+    @OneToMany(mappedBy = "wallet")
     private List<Transaction> transactions = new ArrayList<>();
 }

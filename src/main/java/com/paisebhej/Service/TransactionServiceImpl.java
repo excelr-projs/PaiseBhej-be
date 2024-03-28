@@ -3,6 +3,7 @@ package com.paisebhej.Service;
 import com.paisebhej.DTO.TransactionDTO;
 import com.paisebhej.Exceptions.TransactionException;
 import com.paisebhej.Model.Transaction;
+import com.paisebhej.Model.TransactionType;
 import com.paisebhej.Model.Wallet;
 import com.paisebhej.Respository.TransactionRepository;
 import com.paisebhej.Respository.WalletRepository;
@@ -21,33 +22,37 @@ public class TransactionServiceImpl implements TransactionService{
     private WalletRepository walletRepository;
     @Override
     public TransactionDTO addTransaction(TransactionDTO transactionDTO) throws TransactionException {
-        if (transactionDTO ==null){
-            throw new TransactionException("ENTER CORRECT DETAILS");
+        try {
+            Transaction transaction = new Transaction();
+            transaction.setTransactionAmount(transactionDTO.getTransactionAmount());
+            transaction.setTransactionDate(LocalDate.now());
+            transaction.setTransactionType(TransactionType.valueOf(transactionDTO.getTransactionType()));
+            Wallet wallet = walletRepository.findById(transactionDTO.getWalletId()).orElseThrow(()->new TransactionException("WALLET NOT FOUND"));
+            if (transaction.getTransactionType()==TransactionType.CREDIT) {
+                wallet.setBalance(wallet.getBalance()+transactionDTO.getTransactionAmount());
+            } else if (transaction.getTransactionType()==TransactionType.DEBIT) {
+                if (wallet.getBalance()<transactionDTO.getTransactionAmount()) {
+                    throw new TransactionException("INSUFFICIENT BALANCE");
+                }
+                wallet.setBalance(wallet.getBalance()-transactionDTO.getTransactionAmount());
+            } else {
+                throw new TransactionException("INVALID TRANSACTION TYPE");
+            }
+            transaction.setWallet(wallet);
+            transactionRepository.save(transaction);
+            return transactionDTO;
+        } catch (Exception e) {
+            throw new TransactionException("TRANSACTION FAILED");
         }
-        Wallet wallet = walletRepository.findById(transactionDTO.getWalletId()).get();
-        if (transactionDTO.getWalletId()!=wallet.getWalletId()){
-            throw new TransactionException("INVALID WALLET ID");
-        }
-        if (wallet.getBalance()<transactionDTO.getAmount()){
-            throw new TransactionException("INSUFFICIENT FUNDS");
-        }
-        Transaction transaction =new Transaction();
-        transaction.setAmount(transactionDTO.getAmount());
-        transaction.setTransactionType(transactionDTO.getTransactionType());
-        transaction.setDescription(transactionDTO.getDescription());
-        wallet.getTransactions().add(transaction);
-        walletRepository.save(wallet);
-        return transactionDTO;
     }
 
     @Override
     public List<Transaction> viewTransactionByWallet(Integer walletId) throws TransactionException {
-    List<Transaction> transactions =transactionRepository.findByWalletId((walletId));
-
-    if (transactions.isEmpty()){
-        throw new TransactionException("NO TRANSACTIONS");
-    }
-    return transactions;
+        List<Transaction> transactions =transactionRepository.findByWalletId((walletId));
+        if (transactions.isEmpty()){
+            throw new TransactionException("NO TRANSACTIONS");
+        }
+        return transactions;
     }
 
     @Override
@@ -64,7 +69,7 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
     @Override
-    public List<Transaction> viewAllTransaction(String type) throws TransactionException {
+    public List<Transaction> viewTransactionByType(String type) throws TransactionException {
         List<Transaction> transactions = transactionRepository.findByTransactionType(type);
 
         if (transactions.isEmpty()){

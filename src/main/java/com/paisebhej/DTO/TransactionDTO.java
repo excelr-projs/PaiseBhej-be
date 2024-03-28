@@ -1,15 +1,11 @@
 package com.paisebhej.DTO;
 
-import lombok.AllArgsConstructor;
+import com.paisebhej.Model.TransactionType;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class TransactionDTO {
-    private Double amount;
-    private String description;
+    private Double transactionAmount;
     private String transactionType;
     private int walletId;
 }
