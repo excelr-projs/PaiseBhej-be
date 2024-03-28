@@ -113,7 +113,9 @@ public class WalletController {
 
     @GetMapping("/balance")
     public ResponseEntity<Double> getBalance(@RequestBody BalanceRequest balanceRequest) throws CustomerException, WalletException {
-        Double balance = walletService.showBalance(balanceRequest.getMobile(), balanceRequest.getKey());
+        Wallet Wallet = walletService.getCWallet(balanceRequest.getMobile(), balanceRequest.getKey());
+        System.out.print(Wallet);
+        Double balance = Wallet.getBalance();
         return new ResponseEntity<Double>(balance, HttpStatus.OK);
     }
     

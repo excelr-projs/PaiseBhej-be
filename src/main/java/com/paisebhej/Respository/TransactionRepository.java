@@ -13,5 +13,6 @@ public interface TransactionRepository extends JpaRepository<Transaction,Integer
     public List<Transaction> findByWalletId(int walletId);
     @Query("select t from Transaction t where t.transactionDate>=?1 and t.transactionDate<=?2 ")
     public  List<Transaction> findByTransactionByDate(LocalDate from, LocalDate to);
+    @Query("select t from Transaction t where t.transactionType=?1")
     public List<Transaction> findByTransactionType(String type);
 }

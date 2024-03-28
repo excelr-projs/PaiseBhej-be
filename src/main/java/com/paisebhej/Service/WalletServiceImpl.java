@@ -36,7 +36,7 @@ public class WalletServiceImpl implements WalletService{
     }
 
     @Override
-    public Double showBalance(String mobile, String key) throws CustomerException {
+    public Wallet getCWallet(String mobile, String key) throws CustomerException {
         CurrentUserSession loggedInUser = sessionRepository.findByUuid(key);
         if(loggedInUser == null){
             throw new CustomerException("PLEASE PROVIDE A VALID KEY");
@@ -45,7 +45,16 @@ public class WalletServiceImpl implements WalletService{
         if (customer == null){
             throw  new CustomerException("CUSTOMER NOT FOUND");
         }
-        return customer.getWallet().getBalance();
+        return customer.getWallet();
+    }
+
+    @Override
+    public Wallet getWallet(Integer walletId, String key) throws CustomerException {
+        CurrentUserSession loggedInUser = sessionRepository.findByUuid(key);
+        if (loggedInUser == null) {
+            throw new CustomerException("PLEASE PROVIDE A VALID KEY");
+        }
+        return walletRepository.findById(walletId).get();
     }
 
     @Override

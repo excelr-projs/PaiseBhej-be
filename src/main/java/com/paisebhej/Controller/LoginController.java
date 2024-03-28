@@ -2,6 +2,7 @@ package com.paisebhej.Controller;
 
 import com.paisebhej.DTO.LoginDTO;
 import com.paisebhej.Exceptions.LoginException;
+import com.paisebhej.Service.CustomerService;
 import com.paisebhej.Service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
     @Autowired
     private LoginService loginService;
+    @Autowired
+    private CustomerService customerService;
 
     @PostMapping("/login")
     public ResponseEntity<String> logInCustomer(@RequestBody LoginDTO loginDTO) throws LoginException {
