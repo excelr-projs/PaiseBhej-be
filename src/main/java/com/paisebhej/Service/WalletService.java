@@ -9,7 +9,7 @@ public interface WalletService {
     public Wallet createWallet(String mobile, Double balance, String key) throws CustomerException, WalletException;
     public Wallet getCWallet (String mobile , String key) throws CustomerException;
     public Wallet getWallet(Integer walletId, String key) throws CustomerException;
-    public String fundTransfer(String senderMobile, String receiverMobile ,Double amount, String key)
+    public String fundTransfer(String senderMobile, String receiverMobile , Double amount, String key)
         throws CustomerException , WalletException;
     public Customer depositAmount(String mobile, Double amount, String key) throws CustomerException;
 }

@@ -17,6 +17,7 @@ public class Customer {
     private Integer customerId;
     private String name;
     private String mobileNumber;
+    private String email;
     private String password;
     @ToString.Exclude
     @OneToOne(cascade = CascadeType.ALL)

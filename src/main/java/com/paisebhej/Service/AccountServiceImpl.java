@@ -44,19 +44,22 @@ public class AccountServiceImpl implements AccountService{
         if (loggedInUser==null){
             throw  new CustomerException("PLEASE PROVIDE A VALID KEY");
         }
-        Account existingAccount = accountRepository.findById(accountId).orElseThrow(()->new AccountException("ACCOUNT NO FOUND"));
+        Account existingAccount = accountRepository.findById(accountId).orElseThrow(()->
+                new AccountException("ACCOUNT NOT FOUND"));
         accountRepository.delete(existingAccount);
 
         return existingAccount;
     }
 
     @Override
-    public List<Account> viewAllAccounts(Integer walledId, String key) throws CustomerException, WalletException, AccountException {
+    public List<Account> viewAllAccounts(Integer walledId, String key) throws
+            CustomerException, WalletException, AccountException {
         CurrentUserSession loggedInUser = sessionRepository.findByUuid(key);
         if (loggedInUser==null){
             throw new CustomerException("PROVIDE A VALID KEY");
         }
-        Wallet existingWallet= walletRepository.findById(walledId).orElseThrow(()-> new WalletException("WALLET NOT FOUND"));
+        Wallet existingWallet= walletRepository.findById(walledId).orElseThrow(()->
+                new WalletException("WALLET NOT FOUND"));
         if (existingWallet.getAccounts().isEmpty())
             throw  new AccountException("ACCOUNT NOT FOUND");
         return existingWallet.getAccounts();

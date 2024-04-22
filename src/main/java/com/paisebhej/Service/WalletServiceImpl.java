@@ -19,6 +19,8 @@ public class WalletServiceImpl implements WalletService{
     private WalletRepository walletRepository;
     @Autowired
     private SessionRepository sessionRepository;
+    @Autowired
+    private EmailService emailService;
     @Override
     public Wallet createWallet(String mobile, Double balance, String key) throws CustomerException, WalletException {
         CurrentUserSession loggedInUser = sessionRepository.findByUuid(key);
@@ -60,30 +62,42 @@ public class WalletServiceImpl implements WalletService{
     @Override
     public String fundTransfer(String senderMobile, String receiverMobile, Double amount, String key)
             throws CustomerException, WalletException {
-        CurrentUserSession leggedInUser = sessionRepository.findByUuid(key);
-        if (leggedInUser == null){
+        CurrentUserSession loggedInUser = sessionRepository.findByUuid(key);
+        if (loggedInUser == null) {
             throw new CustomerException("PLEASE PROVIDE A VALID KEY");
         }
+
         Customer sender = customerRepository.findByMobileNumber(senderMobile);
-        if (sender==null){
-            throw new CustomerException("PLEASE PROVIDE A VALID MOBILE NUMBER");
-        }
-        Customer receiver = customerRepository.findByMobileNumber(senderMobile);
-        if (receiver==null){
-            throw new CustomerException("PLEASE PROVIDE A VALID MOBILE NUMBER");
-        }
-        if(amount<sender.getWallet().getBalance()){
-            sender.getWallet().setBalance(receiver.getWallet().getBalance()-amount);
-            receiver.getWallet().setBalance(receiver.getWallet().getBalance()+amount);
-            customerRepository.save(sender);
-            customerRepository.save(receiver);
-            return "TRANSACTION COMPLETED";
-        }
-        else{
-            throw new WalletException("AMOUNT NOT VALID");
+        if (sender == null) {
+            throw new CustomerException("SENDER MOBILE NUMBER NOT FOUND");
         }
 
-    }
+        Customer receiver = customerRepository.findByMobileNumber(receiverMobile);
+        if (receiver == null) {
+            throw new CustomerException("RECEIVER MOBILE NUMBER NOT FOUND");
+        }
+
+        if (amount <= 0) {
+            throw new WalletException("AMOUNT MUST BE GREATER THAN ZERO");
+        }
+
+        if (amount > sender.getWallet().getBalance()) {
+            throw new WalletException("INSUFFICIENT BALANCE");
+        }
+
+        sender.getWallet().setBalance(sender.getWallet().getBalance() - amount);
+        receiver.getWallet().setBalance(receiver.getWallet().getBalance() + amount);
+
+
+        emailService.sendEmail(sender.getEmail(), "Money Transfer Notification", "You have sent $" + amount + " to " + receiver.getEmail());
+        emailService.sendEmail(receiver.getEmail(), "Money Received Notification", "You have received $" + amount + " from " + sender.getEmail());
+
+        customerRepository.save(sender);
+        customerRepository.save(receiver);
+
+        return "TRANSACTION COMPLETED";
+}
+
 
     @Override
     public Customer depositAmount(String mobile, Double amount, String key)
@@ -98,6 +112,7 @@ public class WalletServiceImpl implements WalletService{
         }
         customer.getWallet().setBalance(customer.getWallet().getBalance()+amount);
         customerRepository.save(customer);
+        emailService.sendEmail(customer.getEmail(), "Deposit Notification", "You have successfully deposited $" + amount + " into your wallet.");
         return customer;
     }
 }
