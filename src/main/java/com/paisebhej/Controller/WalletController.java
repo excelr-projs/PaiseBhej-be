@@ -12,18 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Getter
-class BalanceRequest {
-    private String mobile;
-    private String key;
-
-    public BalanceRequest(String mobile, String key) {
-        this.mobile = mobile;
-        this.key = key;
-    }
-
-}
-
-@Getter
 class CreateWalletRequest {
     private String mobile;
     private Double balance;
@@ -76,8 +64,8 @@ public class WalletController {
     private WalletService walletService;
 
     @GetMapping("/balance")
-    public ResponseEntity<Double> getBalance(@RequestBody BalanceRequest balanceRequest) throws CustomerException, WalletException {
-        Wallet Wallet = walletService.getCWallet(balanceRequest.getMobile(), balanceRequest.getKey());
+    public ResponseEntity<Double> getBalance(@RequestParam String mobile, @RequestParam String uuid) throws CustomerException, WalletException {
+        Wallet Wallet = walletService.getCWallet(mobile, uuid);
         System.out.print(Wallet);
         Double balance = Wallet.getBalance();
         return new ResponseEntity<Double>(balance, HttpStatus.OK);
