@@ -25,6 +25,7 @@ public class CustomerController {
             customer.setName(registerDTO.getName());
             customer.setMobileNumber(registerDTO.getMobileNumber());
             customer.setPassword(registerDTO.getPassword());
+            customer.setEmail(registerDTO.getEmail());
             customer.setWallet(wallet);
             Customer savedCustomer = customerService.createCustomer(customer);
             return new ResponseEntity<Customer>(savedCustomer, HttpStatus.CREATED);
