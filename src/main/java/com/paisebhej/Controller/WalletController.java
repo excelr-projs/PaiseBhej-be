@@ -71,6 +71,12 @@ public class WalletController {
         return new ResponseEntity<Double>(balance, HttpStatus.OK);
     }
     
+    @GetMapping("/getWallet")
+    public ResponseEntity<Wallet> getWallet(@RequestParam String mobile, @RequestParam String uuid) throws CustomerException, WalletException {
+        Wallet Wallet = walletService.getCWallet(mobile, uuid);
+        return new ResponseEntity<Wallet>(Wallet, HttpStatus.OK);
+    }
+    
     @PostMapping("/createWallet")
     public ResponseEntity<Wallet> createWalletHandler(@RequestBody CreateWalletRequest createWalletRequest) throws CustomerException, WalletException {
         Wallet wallet = walletService.createWallet(createWalletRequest.getMobile(), createWalletRequest.getBalance(), createWalletRequest.getKey());

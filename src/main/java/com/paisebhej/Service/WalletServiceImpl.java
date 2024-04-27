@@ -8,6 +8,9 @@ import com.paisebhej.Model.Wallet;
 import com.paisebhej.Respository.CustomerRepository;
 import com.paisebhej.Respository.SessionRepository;
 import com.paisebhej.Respository.WalletRepository;
+
+import jakarta.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -89,8 +92,18 @@ public class WalletServiceImpl implements WalletService{
         receiver.getWallet().setBalance(receiver.getWallet().getBalance() + amount);
 
 
-        emailService.sendEmail(sender.getEmail(), "Money Transfer Notification", "You have sent $" + amount + " to " + receiver.getEmail());
-        emailService.sendEmail(receiver.getEmail(), "Money Received Notification", "You have received $" + amount + " from " + sender.getEmail());
+        try {
+            emailService.sendEmail(sender.getEmail(), "Money Transfer Notification", "You have sent $" + amount + " to " + receiver.getEmail());
+        } catch (MessagingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        try {
+            emailService.sendEmail(receiver.getEmail(), "Money Received Notification", "You have received $" + amount + " from " + sender.getEmail());
+        } catch (MessagingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         customerRepository.save(sender);
         customerRepository.save(receiver);
@@ -112,7 +125,12 @@ public class WalletServiceImpl implements WalletService{
         }
         customer.getWallet().setBalance(customer.getWallet().getBalance()+amount);
         customerRepository.save(customer);
-        emailService.sendEmail(customer.getEmail(), "Deposit Notification", "You have successfully deposited $" + amount + " into your wallet.");
+        try {
+            emailService.sendEmail(customer.getEmail(), "Deposit Notification", "You have successfully deposited $" + amount + " into your wallet.");
+        } catch (MessagingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return customer;
     }
 }
