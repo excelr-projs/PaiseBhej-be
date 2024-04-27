@@ -43,23 +43,6 @@ class RemoveAccountRequest {
     }
 }
 
-class ViewAccountRequest {
-    private Integer walletId;
-    private String key;
-
-    public ViewAccountRequest(Integer walletId, String key) {
-        this.walletId = walletId;
-        this.key = key;
-    }
-
-    public Integer getWalletId() {
-        return walletId;
-    }
-
-    public String getKey() {
-        return key;
-    }
-}
 @RestController
 @RequestMapping("/account")
 public class AccountController {
@@ -87,8 +70,8 @@ public class AccountController {
     }
 
     @GetMapping("/viewAccounts")
-    public ResponseEntity<List<Account>> viewAccount(@RequestBody ViewAccountRequest viewAccountRequest) throws CustomerException, WalletException, AccountException {
-        List<Account> accounts = accountService.viewAllAccounts(viewAccountRequest.getWalletId(), viewAccountRequest.getKey());
+    public ResponseEntity<List<Account>> viewAccount(@RequestParam Integer walletId, @RequestParam String key) throws CustomerException, WalletException, AccountException {
+        List<Account> accounts = accountService.viewAllAccounts(walletId, key);
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
