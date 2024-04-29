@@ -28,7 +28,7 @@ public class TransactionController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<List<Transaction>> viewTransactionByWallet(@RequestBody Integer wallet_id)
+    public ResponseEntity<List<Transaction>> viewTransactionByWallet(@RequestParam Integer wallet_id)
             throws TransactionalException, TransactionException {
 
         return new ResponseEntity<>(transactionService.viewTransactionByWallet(wallet_id), HttpStatus.OK);
