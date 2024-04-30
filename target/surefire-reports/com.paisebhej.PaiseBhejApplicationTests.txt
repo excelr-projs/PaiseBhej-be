@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.paisebhej.PaiseBhejApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.92 s -- in com.paisebhej.PaiseBhejApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.17 s -- in com.paisebhej.PaiseBhejApplicationTests
